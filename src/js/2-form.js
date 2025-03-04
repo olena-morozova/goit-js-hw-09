@@ -5,29 +5,42 @@ const formData = {
     message: ""
 };
 const form = document.querySelector(".feedback-form");
-const input = form.querySelector("input");
-const textarea = form.querySelector("textarea");
 
 form.addEventListener("submit", onFormSubmit);
 form.addEventListener("input", onFormInput);
 
 function onFormSubmit(event) {
     event.preventDefault();
-    const form = event.currentTarget;
+    
+    if (formData.email.trim() === "" || formData.message.trim() === "") {
+    alert("Fill please all fields");
+    return;
+  }
+
+  console.log(formData);
 
     localStorage.removeItem(STORAGE_KEY);
     form.reset();
+    formData.email = "";
+  formData.message = "";
 }
 
-function onFormInput(event) {
-console.log(event.target.name, event.target.value.trim());
 
+function onFormInput(event) {
     formData[event.target.name] = event.target.value.trim();
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
+      
+     if (formData.email || formData.message) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
+    } else {
+        localStorage.removeItem(STORAGE_KEY);
+    }
 }
 
 const savedData = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "{}");
 
 form.elements.email.value = savedData.email || "";
 form.elements.message.value = savedData.message || "";
+
+formData.email = savedData.email || "";
+formData.message = savedData.message || "";
 
